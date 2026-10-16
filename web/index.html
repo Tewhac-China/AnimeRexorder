@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AnimeRex · 我的日本动番档案 2006–2025</title>
+<style>
+:root{
+  --bg:#0d1015; --bg2:#141922; --panel:#171d27; --line:#252d3a; --inp:#101520;
+  --tx:#e7edf5; --tx2:#96a4b8; --tx3:#65748a;
+  --ac:#4cc4ff; --ac2:#8fd8ff;
+  --w:#4ade80; --wip:#60a5fa; --wish:#fbbf24; --drop:#fb7185;
+  --stick:0px; --r:14px; --shadow:0 10px 26px rgba(0,0,0,.42);
+}
+body.light{
+  --bg:#f4f6fa; --bg2:#ffffff; --panel:#ffffff; --line:#dfe5ee; --inp:#f1f4f9;
+  --tx:#121821; --tx2:#54637a; --tx3:#8b98ab;
+  --ac:#0a84c4; --ac2:#b45309;
+  --shadow:0 8px 22px rgba(24,40,66,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Noto Sans CJK SC",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+body[data-view=list]{font-size:13px}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--ac);text-decoration:none}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:var(--tx3)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- 顶部 ---------- */
+.topwrap{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg2) 92%,transparent);
+  border-bottom:1px solid var(--line);max-height:56vh;overflow-y:auto;backdrop-filter:blur(12px)}
+header.top{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:10px 18px}
+.brand{font-weight:800;font-size:15.5px;letter-spacing:.4px;line-height:1.15}
+.brand small{display:block;font-weight:400;font-size:10.5px;color:var(--tx3);letter-spacing:.2px}
+.rundown{display:flex;gap:16px;flex-wrap:wrap;margin-left:auto;text-align:right}
+.rundown div{min-width:52px}
+.rundown b{display:block;font-size:16px;font-variant-numeric:tabular-nums;letter-spacing:.3px}
+.rundown span{font-size:10px;color:var(--tx3)}
+.rundown .k-w b{color:var(--w)}.rundown .k-wip b{color:var(--wip)}
+.rundown .k-wish b{color:var(--wish)}.rundown .k-drop b{color:var(--drop)}
+.tools{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--inp);border:1px solid var(--line);border-radius:9px;padding:6px 11px;cursor:pointer;
+  font-size:12.5px;color:var(--tx2);transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
+.btn:hover{border-color:var(--ac);color:var(--tx)}
+.btn.on{background:color-mix(in srgb,var(--ac) 18%,var(--inp));border-color:var(--ac);color:var(--ac)}
+.btn.tiny{padding:3px 8px;font-size:11px;border-radius:7px}
+.seg{display:inline-flex;background:var(--inp);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{background:none;border:0;padding:5px 10px;cursor:pointer;font-size:12px;color:var(--tx3)}
+.seg button.on{background:color-mix(in srgb,var(--ac) 20%,transparent);color:var(--ac)}
+
+/* ---------- 筛选 ---------- */
+.filters{padding:8px 18px 10px;display:flex;flex-direction:column;gap:9px}
+.frow{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}
+.frow.adv{display:none;padding-top:9px;border-top:1px dashed var(--line)}
+body.advopen .frow.adv{display:flex}
+.fg{display:flex;flex-direction:column;gap:5px;min-width:0}
+.fg.grow{flex:2 1 460px}
+.fg>label{font-size:10.5px;color:var(--tx3);display:flex;gap:6px;align-items:center;letter-spacing:.3px}
+.frow .chips{max-height:58px;overflow-y:auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--inp);border:1px solid var(--line);border-radius:20px;padding:3px 11px;font-size:12px;
+  cursor:pointer;color:var(--tx2);user-select:none;transition:.12s;white-space:nowrap}
+.chip:hover{border-color:var(--ac);color:var(--tx)}
+.chip.on{background:color-mix(in srgb,var(--ac) 22%,var(--inp));border-color:var(--ac);color:var(--ac);font-weight:600}
+.chip.yr{min-width:46px;text-align:center;font-variant-numeric:tabular-nums}
+.chip.st-w.on{background:color-mix(in srgb,var(--w) 20%,var(--inp));border-color:var(--w);color:var(--w)}
+.chip.st-wip.on{background:color-mix(in srgb,var(--wip) 20%,var(--inp));border-color:var(--wip);color:var(--wip)}
+.chip.st-wish.on{background:color-mix(in srgb,var(--wish) 20%,var(--inp));border-color:var(--wish);color:var(--wish)}
+.chip.st-drop.on{background:color-mix(in srgb,var(--drop) 20%,var(--inp));border-color:var(--drop);color:var(--drop)}
+.mini{font-size:10.5px;color:var(--tx3);cursor:pointer;border-bottom:1px dotted var(--tx3)}
+.mini:hover{color:var(--ac);border-color:var(--ac)}
+input[type=search],select{background:var(--inp);border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:12.5px;outline:none}
+input[type=search]{width:230px}
+input[type=range]{width:120px;accent-color:var(--ac);vertical-align:middle}
+.sw{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2);cursor:pointer}
+.sw input{accent-color:var(--ac)}
+.hint{font-size:11px;color:var(--tx3);font-variant-numeric:tabular-nums}
+.yearnav{display:flex;gap:6px;padding:0 18px 9px;overflow-x:auto;scrollbar-width:none}
+.yearnav::-webkit-scrollbar{display:none}
+.yn{background:var(--inp);border:1px solid var(--line);border-radius:8px;padding:2px 9px;font-size:11.5px;
+  cursor:pointer;color:var(--tx2);white-space:nowrap;flex:none}
+.yn:hover{border-color:var(--ac)}
+.yn b{color:var(--w);font-weight:700}
+
+/* ---------- 主区 ---------- */
+main{padding:14px 18px 80px;max-width:2000px;margin:0 auto}
+.yearsec{margin:30px 0 4px;scroll-margin-top:calc(var(--stick) + 6px)}
+.yearhd{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:7px;
+  position:sticky;top:var(--stick);background:var(--bg);z-index:40}
+.yearhd h2{margin:0;font-size:20px;font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums}
+.yearhd .meta{font-size:11.5px;color:var(--tx3)}
+.yearhd .meta b{color:var(--tx2);font-weight:600}
+.yearhd .prog{margin-left:auto;width:150px;height:6px;background:var(--inp);border-radius:4px;overflow:hidden}
+.yearhd .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--w),#16a34a);border-radius:4px}
+.cour{margin:16px 0 2px}
+.courhd{display:flex;align-items:center;gap:10px;padding:5px 0 8px;position:sticky;
+  top:calc(var(--stick) + 40px);background:var(--bg);z-index:30}
+.courhd h3{margin:0;font-size:13px;font-weight:700;color:var(--tx2);letter-spacing:.5px}
+.courhd h3 em{font-style:normal;color:var(--ac)}
+.courhd .cn{font-size:11px;color:var(--tx3)}
+.courhd .act{margin-left:auto;display:flex;gap:5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(162px,1fr));gap:14px}
+body[data-view=poster] .grid{grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:16px}
+body[data-view=list] .grid{grid-template-columns:1fr;gap:5px}
+
+/* ---------- 卡片 ---------- */
+.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s}
+.card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--ac) 45%,var(--line));box-shadow:var(--shadow)}
+.card:active{transform:translateY(-1px) scale(.99)}
+.cover{position:relative;aspect-ratio:7/10;background:var(--inp);overflow:hidden}
+body[data-view=poster] .cover{aspect-ratio:7/9.4}
+.cover img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .35s,transform .35s}
+.cover img.shown{opacity:1}
+.card:hover .cover img.shown{transform:scale(1.045)}
+.ph{position:absolute;inset:0;display:grid;place-items:center;font-size:34px;font-weight:800;color:var(--tx3);
+  background:linear-gradient(135deg,#1c2432,#141922)}
+.tick{position:absolute;top:8px;right:8px;width:23px;height:23px;border-radius:7px;
+  border:1.5px solid rgba(255,255,255,.45);background:rgba(6,9,14,.5);display:grid;place-items:center;
+  font-size:13px;font-weight:900;color:transparent;transition:.15s;z-index:3}
+.card:hover .tick{border-color:rgba(255,255,255,.85)}
+.ribbon{position:absolute;top:9px;left:0;padding:2px 9px 2px 7px;font-size:10.5px;font-weight:800;letter-spacing:1px;
+  color:#06120a;background:var(--w);border-radius:0 7px 7px 0;transform:translateX(-100%);transition:transform .18s;z-index:3}
+.card.st-w .ribbon,.card.st-wip .ribbon,.card.st-wish .ribbon,.card.st-drop .ribbon{transform:none}
+.card.st-w .ribbon{background:var(--w)} .card.st-wip{border-color:var(--wip)} .card.st-wip .ribbon{background:var(--wip);color:#04101f}
+.card.st-wish .ribbon{background:var(--wish);color:#1d1401} .card.st-drop .ribbon{background:var(--drop);color:#28060d}
+.card.st-w .tick,.card.st-wip .tick,.card.st-wish .tick,.card.st-drop .tick{color:#06120a}
+.card.st-w .tick{background:var(--w);border-color:var(--w)}
+.card.st-wip .tick{background:var(--wip);border-color:var(--wip)}
+.card.st-wish .tick{background:var(--wish);border-color:var(--wish)}
+.card.st-drop .tick{background:var(--drop);border-color:var(--drop)}
+.card.st-w .cover img,.card.st-drop .cover img{filter:saturate(.72) brightness(.9)}
+.score{position:absolute;bottom:8px;right:8px;padding:2px 7px;border-radius:7px;font-size:11.5px;font-weight:700;
+  background:rgba(6,9,14,.72);color:var(--ac2);z-index:3;font-variant-numeric:tabular-nums}
+.score.s7{color:#ffd166}.score.s8{color:#8ce99a}.score.s9{color:#66d9e8}.score.zero{color:var(--tx3);font-weight:500}
+.ovl{position:absolute;left:0;right:0;bottom:0;padding:20px 9px 8px;font-size:10.5px;line-height:1.45;color:#dfe8f2;
+  background:linear-gradient(transparent,rgba(4,7,12,.9));opacity:0;transition:opacity .18s;z-index:2;pointer-events:none}
+.card:hover .ovl{opacity:1}
+.body{padding:8px 10px 10px}
+.t{font-size:12.5px;height:2.9em;overflow:hidden;line-height:1.45;font-weight:600;letter-spacing:.1px}
+body[data-view=poster] .t{font-size:13.5px}
+.o{font-size:10.5px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;min-height:1.2em}
+.m{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;font-size:10.5px;color:var(--tx2)}
+.m span{background:var(--inp);border:1px solid var(--line);border-radius:6px;padding:1px 6px;white-space:nowrap}
+.m .ep{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 35%,var(--line))}
+.m .sc{display:none;color:var(--ac2)}
+.m .rg{color:var(--drop);border-color:color-mix(in srgb,var(--drop) 40%,var(--line))}
+.m a.lk{margin-left:auto;color:var(--tx3);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.m a.lk:hover{color:var(--ac);border-color:var(--ac)}
+body[data-view=list] .card{display:flex;align-items:center;border-radius:10px}
+body[data-view=list] .card:hover{transform:translateX(3px)}
+body[data-view=list] .cover{width:46px;flex:none;aspect-ratio:7/10;border-radius:8px 0 0 8px}
+body[data-view=list] .ribbon{font-size:9.5px;padding:1px 6px;top:50%;transform:translate(-100%,-50%)}
+body[data-view=list] .card.st-w .ribbon,body[data-view=list] .card.st-wip .ribbon,
+body[data-view=list] .card.st-wish .ribbon,body[data-view=list] .card.st-drop .ribbon{transform:translateY(-50%)}
+body[data-view=list] .tick{width:16px;height:16px;font-size:10px;top:50%;right:6px;transform:translateY(-50%)}
+body[data-view=list] .score,body[data-view=list] .ovl{display:none}
+body[data-view=list] .m .sc{display:inline-block}
+body[data-view=list] .body{flex:1;display:flex;align-items:baseline;gap:14px;padding:9px 12px;min-width:0}
+body[data-view=list] .t{height:auto;width:34%;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-view=list] .o{width:28%;flex:none;margin:0}
+body[data-view=list] .m{margin:0;flex:1;justify-content:flex-end;overflow:hidden;flex-wrap:nowrap}
+.empty{padding:70px 20px;text-align:center;color:var(--tx3)}
+.empty h3{color:var(--tx2);margin:0 0 6px}
+footer{padding:20px 18px 30px;color:var(--tx3);font-size:11.5px;border-top:1px solid var(--line);max-width:2000px;margin:0 auto}
+
+/* ---------- 统计面板 ---------- */
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;margin:4px 0 20px}
+.panel h4{margin:0 0 11px;font-size:12.5px;color:var(--tx2);letter-spacing:.4px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px 24px}
+.kv{display:flex;gap:22px;flex-wrap:wrap;font-size:11px;color:var(--tx3);margin-bottom:12px}
+.kv b{display:block;font-size:19px;color:var(--tx);font-variant-numeric:tabular-nums;letter-spacing:.3px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:104px;padding-top:14px}
+.bars div{flex:1;background:linear-gradient(180deg,var(--ac),color-mix(in srgb,var(--ac) 35%,transparent));
+  border-radius:4px 4px 0 0;position:relative;min-height:2px;transition:filter .15s}
+.bars div:hover{filter:brightness(1.3)}
+.bars div i{position:absolute;bottom:-15px;left:0;right:0;text-align:center;font-size:9px;color:var(--tx3);font-style:normal}
+.bars div b{position:absolute;top:-14px;left:0;right:0;text-align:center;font-size:9.5px;color:var(--tx2);font-weight:600}
+.list{display:flex;flex-wrap:wrap;gap:5px}
+.list span{background:var(--inp);border:1px solid var(--line);border-radius:7px;padding:2px 9px;font-size:11.5px;color:var(--tx2)}
+.list span b{color:var(--ac2);font-weight:700}
+.heat{display:flex;flex-direction:column;gap:4px}
+.hrow{display:flex;align-items:center;gap:5px}
+.hrow .hl{width:16px;font-size:10.5px;color:var(--tx3);text-align:right;flex:none}
+.hcells{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;flex:1}
+.hc{aspect-ratio:1;border-radius:3px;background:var(--inp);min-width:0}
+.hc:hover{outline:1.5px solid var(--ac)}
+.srow{display:flex;align-items:center;gap:9px;margin:5px 0;font-size:11.5px;color:var(--tx2)}
+.srow .lb{width:42px;flex:none;text-align:right;color:var(--tx3)}
+.srow .tr{flex:1;height:14px;background:var(--inp);border-radius:7px;overflow:hidden}
+.srow .tr i{display:block;height:100%;border-radius:7px}
+.srow .nu{width:66px;flex:none;font-variant-numeric:tabular-nums}
+
+/* ---------- 菜单 / 提示 / 帮助 ---------- */
+.menu{position:fixed;z-index:120;background:var(--bg2);border:1px solid var(--line);border-radius:11px;
+  padding:5px;box-shadow:var(--shadow);display:none;min-width:132px}
+.menu.on{display:block}
+.menu button{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;border-radius:8px;
+  padding:6px 9px;font-size:12.5px;color:var(--tx2);cursor:pointer;text-align:left}
+.menu button:hover{background:var(--inp);color:var(--tx)}
+.menu button .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.menu hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);z-index:130;background:var(--bg2);
+  border:1px solid var(--line);border-radius:11px;padding:9px 13px;font-size:12.5px;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:11px;opacity:0;pointer-events:none;transition:.22s}
+#toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.modal{position:fixed;inset:0;z-index:140;background:rgba(4,7,12,.66);display:none;place-items:center;padding:20px}
+.modal.on{display:grid}
+.modal .box{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:20px 22px;max-width:520px;
+  max-height:82vh;overflow:auto;box-shadow:var(--shadow)}
+.modal h3{margin:0 0 12px;font-size:15px}
+.modal table{width:100%;border-collapse:collapse;font-size:12.5px}
+.modal td{padding:5px 8px;border-bottom:1px solid var(--line);color:var(--tx2)}
+.modal td:first-child{width:96px;color:var(--ac);font-family:ui-monospace,Consolas,monospace;font-size:12px}
+@media (max-width:820px){
+  .rundown{display:none}
+  input[type=search]{width:150px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:9px}
+  .hcells{grid-template-columns:repeat(20,1fr);gap:2px}
+  .t{font-size:11.5px}
+}
+</style>
+</head>
+<body data-view="grid">
+<div class="topwrap">
+  <header class="top">
+    <div class="brand">AnimeRex<small>2006–2025 每季日本 TV 动画 · bangumi.tv</small></div>
+    <div class="rundown" id="rundown"></div>
+    <div class="tools">
+      <div class="seg" id="viewSeg">
+        <button data-v="grid" title="网格视图">▦ 网格</button>
+        <button data-v="list" title="紧凑列表">≡ 列表</button>
+        <button data-v="poster" title="大海报">▣ 海报</button>
+      </div>
+      <button class="btn" id="btnTheme" title="深浅色切换（T）">◐ 主题</button>
+      <button class="btn" id="btnStats">▤ 统计</button>
+      <button class="btn" id="btnExport">↧ 导出</button>
+      <button class="btn" id="btnImport">↥ 导入</button>
+      <button class="btn" id="btnHelp" title="快捷键（?）">?</button>
+      <input type="file" id="fileImport" accept=".json,application/json" style="display:none">
+    </div>
+  </header>
+
+  <div class="filters">
+    <div class="frow">
+      <div class="fg"><label>标记状态</label><div class="chips" id="fSt"></div></div>
+      <div class="fg"><label>季度</label><div class="chips" id="fQ"></div></div>
+      <div class="fg grow"><label>年份
+        <span class="mini" data-quick="all">全选</span>·<span class="mini" data-quick="none">清空</span>·
+        <span class="mini" data-quick="recent">近5年</span>·<span class="mini" data-quick="prev">近10年</span></label>
+        <div class="chips" id="fYears"></div></div>
+      <div class="fg"><label>搜索</label><input type="search" id="fSearch" placeholder="中/日文名·制作·电视台（/ ）"></div>
+      <div class="fg"><label>组内排序</label><select id="fSort">
+        <option value="year">热度 ↓</option><option value="score">评分 ↓</option>
+        <option value="eps">集数 ↓</option><option value="name">标题 A→Z</option></select></div>
+      <button class="btn" id="btnAdv">高级 ▾</button>
+      <button class="btn" id="btnReset" title="恢复默认筛选">重置</button>
+    </div>
+    <div class="frow adv">
+      <div class="fg grow"><label>类型</label><div class="chips" id="fGenres"></div></div>
+      <div class="fg"><label>改编来源</label><div class="chips" id="fSource"></div></div>
+      <div class="fg"><label>体量</label><div class="chips" id="fEps"></div></div>
+      <div class="fg"><label>评分≥ <b id="vScore" class="hint">0</b></label>
+        <input type="range" id="fScore" min="0" max="9" step="0.5" value="0"></div>
+      <div class="fg"><label>热度≥ <b id="vPop" class="hint">0</b> 人</label>
+        <input type="range" id="fPop" min="0" max="5" step="1" value="0"></div>
+      <div class="fg"><label>包含</label>
+        <label class="sw"><input type="checkbox" id="fNonJP">非日番</label>
+        <label class="sw"><input type="checkbox" id="fNSFW">R18</label></div>
+    </div>
+  </div>
+  <nav class="yearnav" id="yearNav" title="点击跳转到对应年份"></nav>
+</div>
+
+<main>
+  <div id="statsHost"></div>
+  <div id="stream"></div>
+</main>
+
+<footer>
+  <b>口径</b>：卡片按<em>开播月份</em>归档（1–3月 冬 / 4–6月 春 / 7–9月 夏 / 10–12月 秋），跨季长番归入首播季；
+  仅收录 TV 系列（OVA／剧场版不在内）。<br>
+  <b>标记</b>：左键＝快速切换「看过」；右键／长按＝在看·想看·弃番·清除。批量操作可 Ctrl+Z 撤销。<br>
+  <b>存储</b>：全部在本机浏览器 localStorage，不上传任何地方；换设备用「导出」再「导入」。共
+  <b id="fTotal"></b> 条条目（日番 <b id="fJp"></b> 条），非日番默认隐藏。
+</footer>
+
+<div class="menu" id="menu"></div>
+<div id="toast"></div>
+<div class="modal" id="help"><div class="box">
+  <h3>AnimeRex 使用说明</h3>
+  <table>
+    <tr><td>左键点卡片</td><td>标记／取消「看过」</td></tr>
+    <tr><td>右键 · 长按</td><td>打开状态菜单：在看 / 想看 / 弃番 / 清除</td></tr>
+    <tr><td>/</td><td>跳到搜索框，输入即时过滤（Esc 清空）</td></tr>
+    <tr><td>V</td><td>切换视图密度：网格 → 列表 → 海报</td></tr>
+    <tr><td>T</td><td>深色 / 浅色主题</td></tr>
+    <tr><td>S</td><td>展开收起统计面板</td></tr>
+    <tr><td>Ctrl+Z</td><td>撤销上一次标记（含批量）</td></tr>
+    <tr><td>?</td><td>本帮助</td></tr>
+  </table>
+  <p class="hint" style="margin-top:12px">筛选条件会写进地址栏 # 后面，复制网址即可把当前视图分享给自己。
+  数据来自 bangumi.tv，封面已下载到本地，断网可用。</p>
+</div></div>
+
+<script src="data.js"></script>
+<script src="xlsx.js"></script>
+<script>
+'use strict';
+const D=(window.ANIME||[]).filter(x=>x.y&&x.q);
+const BY=new Map(D.map(x=>[x.i,x]));
+const YEARS=[...new Set(D.map(x=>x.y))].sort((a,b)=>b-a);
+const QN={1:'冬',2:'春',3:'夏',4:'秋'};
+const RG={cn:'国创',kr:'韩国',us:'美国',west:'欧美',tw:'中国台湾',other:'其他',unk:'地区未判定'};
+const STS={w:'看过',wip:'在看',wish:'想看',drop:'弃番'};
+const POP=[0,50,150,400,1000,3000];
+const LS={st:'anirex.status.v2',old:'anirex.watched.v1',f:'anirex.filters.v2',ui:'anirex.ui.v2'};
+
+/* ================= 状态存储 ================= */
+function loadSt(){
+  let raw;
+  try{raw=localStorage.getItem(LS.st)}catch(e){}
+  if(raw==null){
+    let old=[];try{old=JSON.parse(localStorage.getItem(LS.old)||'[]')}catch(e){}
+    return new Map(old.map(id=>[+id,'w']));
+  }
+  try{const o=JSON.parse(raw);return new Map(Object.entries(o).map(([k,v])=>[+k,v]))}catch(e){return new Map()}
+}
+let ST=loadSt();
+let saveT;
+function saveSt(){clearTimeout(saveT);saveT=setTimeout(()=>{
+  try{localStorage.setItem(LS.st,JSON.stringify(Object.fromEntries(ST)))}catch(e){}
+},220);}
+
+const DEF_KEYS=['st','q','years','genres','sources','eps','score','pop','nonjp','nsfw','search','sort'];
+const mkDef=()=>({st:'any',q:[1,2,3,4],years:[YEARS[0]],genres:[],sources:[],eps:[],score:0,pop:0,
+  nonjp:false,nsfw:false,search:'',sort:'year'});
+let F=mkDef();
+try{Object.assign(F,JSON.parse(localStorage.getItem(LS.f)||'{}'))}catch(e){}
+let U={view:'grid',theme:matchMedia('(prefers-color-scheme: light)').matches?'light':'dark',stats:false};
+try{Object.assign(U,JSON.parse(localStorage.getItem(LS.ui)||'{}'))}catch(e){}
+
+/* hash 覆盖（分享链接）：支持中文，数组用点号压缩 */
+const b64e=s=>btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/'))));
+try{
+  const h=location.hash.replace(/^#/,'');
+  if(h.startsWith('f=')){
+    const o=JSON.parse(b64d(h.slice(2)));
+    F=Object.assign(mkDef(),o);
+    if(typeof o.years==='string')F.years=o.years.split('.').map(Number);
+    if(typeof o.q==='string')F.q=o.q.split('.').map(Number);
+    if(typeof o.genres==='string')F.genres=o.genres.split('.').filter(Boolean);
+    if(typeof o.sources==='string')F.sources=o.sources.split('.').filter(Boolean);
+    if(typeof o.eps==='string')F.eps=o.eps.split('.').filter(Boolean);
+  }
+}catch(e){}
+let saveF;
+function persist(){clearTimeout(saveF);saveF=setTimeout(()=>{
+  try{localStorage.setItem(LS.f,JSON.stringify(F));localStorage.setItem(LS.ui,JSON.stringify(U))}catch(e){}
+  const d=mkDef(),c={};
+  for(const k of DEF_KEYS){
+    if(Array.isArray(F[k])){if(String(F[k])!==String(d[k]))c[k]=F[k].join('.');continue}
+    if(String(F[k])!==String(d[k]))c[k]=F[k];
+  }
+  history.replaceState(null,'',Object.keys(c).length?'#f='+b64e(JSON.stringify(c)):location.pathname+location.search);
+},300);}
+
+/* ================= 筛选 ================= */
+function count(k){let n=0;for(const v of ST.values())if(v===k)n++;return n}
+function pass(x){
+  if(!F.years.includes(x.y))return false;
+  if(!F.q.includes(x.q))return false;
+  if(!F.nonjp&&x.rg!=='jp')return false;
+  if(!F.nsfw&&x.nf)return false;
+  const s=ST.get(x.i);
+  if(F.st==='none'){if(s)return false}
+  else if(F.st!=='any'&&s!==F.st)return false;
+  if(F.score>0&&!(x.s>=F.score))return false;
+  if(F.pop>0&&!(x.p>=POP[F.pop]))return false;
+  if(F.genres.length&&!F.genres.some(g=>(x.g||[]).includes(g)||x.n.includes(g)||(x.c||'').includes(g)))return false;
+  if(F.sources.length&&!F.sources.includes(x.so||'其他'))return false;
+  if(F.eps.length){
+    const e=x.e||0;
+    if(!((F.eps.includes('short')&&e<=13)||(F.eps.includes('cour')&&e>13&&e<=26)||
+         (F.eps.includes('long')&&e>26&&e<=60)||(F.eps.includes('epic')&&e>60)))return false;
+  }
+  if(F.search){
+    const s=F.search.toLowerCase();
+    if(!((x.n+' '+(x.c||'')+' '+(x.st||'')+' '+(x.sta||'')+' '+(x.t||[]).join(' ')+' '+(x.g||[]).join(' ')).toLowerCase().includes(s)))return false;
+  }
+  return true;
+}
+function sortIn(a){
+  return a.sort((x,y)=>F.sort==='score'?(y.s||0)-(x.s||0):F.sort==='eps'?(y.e||0)-(x.e||0):
+    F.sort==='name'?(x.c||x.n).localeCompare(y.c||y.n,'zh'):(y.p||0)-(x.p||0));
+}
+
+/* ================= 控件 ================= */
+const $=id=>document.getElementById(id);
+const chip=(txt,on,fn,cls)=>{const e=document.createElement('div');
+  e.className='chip'+(on?' on':'')+(cls?' '+cls:'');e.textContent=txt;e.onclick=fn;return e};
+function buildFilters(){
+  const st=$('fSt');st.innerHTML='';
+  [['any','全部'],['none','未标记'],...Object.entries(STS)].forEach(([k,l])=>
+    st.appendChild(chip(l+(k!=='any'&&k!=='none'?' '+count(k):''),F.st===k,()=>{F.st=k;sync()},
+      STS[k]?'st-'+k:'')));
+  const y=$('fYears');y.innerHTML='';
+  YEARS.forEach(v=>y.appendChild(chip(v,F.years.includes(v),()=>{
+    F.years.includes(v)?F.years=F.years.filter(z=>z!==v):F.years.push(v);sync()},'yr')));
+  const q=$('fQ');q.innerHTML='';
+  [1,2,3,4].forEach(n=>q.appendChild(chip(QN[n]+'季',F.q.includes(n),()=>{
+    F.q.includes(n)?F.q=F.q.filter(z=>z!==n):F.q.push(n);sync()})));
+  const c={};D.forEach(x=>(x.g||[]).forEach(g=>c[g]=(c[g]||0)+1));
+  const g=$('fGenres');g.innerHTML='';
+  Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,24).forEach(([n])=>g.appendChild(chip(n,F.genres.includes(n),()=>{
+    F.genres.includes(n)?F.genres=F.genres.filter(z=>z!==n):F.genres.push(n);sync()})));
+  const s=$('fSource');s.innerHTML='';
+  ['漫画改','小说改','游戏改','原创','动画衍生','其他'].forEach(n=>s.appendChild(chip(n,F.sources.includes(n),()=>{
+    F.sources.includes(n)?F.sources=F.sources.filter(z=>z!==n):F.sources.push(n);sync()})));
+  const e2=$('fEps');e2.innerHTML='';
+  [['short','≤13话'],['cour','14–26话'],['long','27–60话'],['epic','>60话']].forEach(([k,l])=>
+    e2.appendChild(chip(l,F.eps.includes(k),()=>{
+      F.eps.includes(k)?F.eps=F.eps.filter(z=>z!==k):F.eps.push(k);sync()})));
+  $('fScore').value=F.score;$('vScore').textContent=F.score||0;
+  $('fPop').value=F.pop;$('vPop').textContent=POP[F.pop];
+  $('fNonJP').checked=F.nonjp;$('fNSFW').checked=F.nsfw;
+  $('fSearch').value=F.search;$('fSort').value=F.sort;
+  document.querySelectorAll('#viewSeg button').forEach(b=>b.classList.toggle('on',b.dataset.v===U.view));
+  sticky();
+}
+['fScore','fPop'].forEach(id=>$(id).oninput=e=>{F[id==='fScore'?'score':'pop']=+e.target.value;
+  $(id==='fScore'?'vScore':'vPop').textContent=id==='fScore'?F.score:POP[F.pop];sync()});
+$('fNonJP').onchange=e=>{F.nonjp=e.target.checked;sync()};
+$('fNSFW').onchange=e=>{F.nsfw=e.target.checked;sync()};
+$('fSort').onchange=e=>{F.sort=e.target.value;sync()};
+let tmr;$('fSearch').oninput=e=>{clearTimeout(tmr);const v=e.target.value;
+  tmr=setTimeout(()=>{F.search=v.trim();sync()},160)};
+document.querySelectorAll('[data-quick]').forEach(el=>el.onclick=()=>{
+  const k=el.dataset.quick;
+  F.years=k==='all'?YEARS.slice():k==='none'?[]:
+    k==='recent'?YEARS.filter(y=>y>=YEARS[0]-4):YEARS.filter(y=>y>=YEARS[0]-9);sync()});
+$('btnAdv').onclick=()=>{const on=document.body.classList.toggle('advopen');
+  $('btnAdv').classList.toggle('on',on);$('btnAdv').textContent=on?'高级 ▴':'高级 ▾';sticky()};
+$('btnReset').onclick=()=>{F=mkDef();sync()};
+$('viewSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;setView(b.dataset.v)};
+function setView(v){U.view=v;document.body.dataset.view=v;buildFilters();sticky();persist()}
+$('btnTheme').onclick=()=>setTheme(U.theme==='dark'?'light':'dark');
+function setTheme(t){U.theme=t;document.body.classList.toggle('light',t==='light');persist()}
+$('btnStats').onclick=()=>{U.stats=!U.stats;$('btnStats').classList.toggle('on',U.stats);updateStats()};
+$('btnHelp').onclick=()=>$('help').classList.add('on');
+$('help').onclick=e=>{if(e.target===$('help')||e.key==='Escape')$('help').classList.remove('on')};
+function sticky(){const h=document.querySelector('.topwrap').offsetHeight;
+  document.documentElement.style.setProperty('--stick',h+'px')}
+new ResizeObserver(sticky).observe(document.querySelector('.topwrap'));
+addEventListener('resize',sticky);
+
+/* ================= 卡片 ================= */
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&quot;','"':'&quot;',"'":'&#39;'}[c]));
+function card(x){
+  const st=ST.get(x.i);
+  const el=document.createElement('article');
+  el.className='card'+(st?' st-'+st:'');el.dataset.id=x.i;
+  const pop=(x.p||0)>=1000?((x.p/1000).toFixed(1)+'k'):(x.p||0);
+  const sc=x.s?`<span class="sc">★ ${x.s.toFixed(1)}</span>`:'<span class="sc">—</span>';
+  const scCls=x.s?(x.s>=9?'s9':x.s>=8?'s8':x.s>=7?'s7':''):'';
+  el.innerHTML=`<div class="cover">
+    <img alt="" data-src="${x.L||''}" data-rem="${x.U||''}" loading="lazy" decoding="async">
+    <div class="ribbon">${st?STS[st]:''}</div><div class="tick">${st?'✓':''}</div>
+    <div class="score ${scCls}">${x.s?'★ '+x.s.toFixed(1):'未评分'}</div>
+    <div class="ovl">${x.d||'日期未知'} 开播${x.sta?' · '+esc(x.sta):''}${x.st?'<br>'+esc(x.st):''}</div>
+  </div>
+  <div class="body">
+    <div class="t">${esc(x.c||x.n)}</div>
+    <div class="o">${x.c?esc(x.n):'&nbsp;'}</div>
+    <div class="m">${sc}${x.e?`<span class="ep">${x.e}话</span>`:''}
+      <span title="开播月">${x.mo}月</span>${x.so?`<span>${esc(x.so)}</span>`:''}
+      ${(x.g||[]).slice(0,2).map(v=>`<span>${esc(v)}</span>`).join('')}
+      ${x.rg!=='jp'?`<span class="rg">${RG[x.rg]||x.rg}</span>`:''}
+      <span title="bangumi 评分人数">${pop}人</span>
+      <a class="lk" href="https://bgm.tv/subject/${x.i}" target="_blank" rel="noopener" title="在 bangumi 打开">bgm</a>
+    </div>
+  </div>`;
+  el.title=`${x.n}\n${x.c||''}\n${x.d||''} · ${x.e||'?'}话 · ${x.s?('★'+x.s):'未评分'}（${x.p||0}人）`;
+  el.tabIndex=0;el.setAttribute('role','checkbox');el.setAttribute('aria-checked',st?'true':'false');
+  el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle(x.i,e.altKey)}};
+  el.onclick=ev=>{if(ev.target.closest('a'))return;toggle(x.i,ev.altKey)};
+  el.oncontextmenu=ev=>{ev.preventDefault();openMenu(x,ev.clientX,ev.clientY)};
+  let lp;el.onpointerdown=ev=>{if(ev.pointerType==='mouse')return;
+    lp=setTimeout(()=>{openMenu(x,ev.clientX,ev.clientY);vibrate(12)},520)};
+  const clr=()=>clearTimeout(lp);el.onpointerup=clr;el.onpointermove=e=>{if(e.pointerType!=='mouse')clr()};
+  el.onpointercancel=clr;
+  return el;
+}
+const vibrate=n=>{try{navigator.vibrate&&navigator.vibrate(n)}catch(e){}};
+
+/* ---- 撤销 ---- */
+let group=null;const undoStack=[];
+function begin(){if(!group)group=new Map()}
+function rec(id,prev){begin();if(!group.has(id))group.set(id,prev)}
+function commit(label){
+  if(!group)return;
+  if(group.size){undoStack.push({label,ch:[...group]});if(undoStack.length>30)undoStack.shift();toast(label+' '+group.size+' 部')}
+  group=null;
+}
+function undo(){
+  const u=undoStack.pop();if(!u)return toast('没有可撤销的操作');
+  for(const [id,prev] of u.ch){prev==null?ST.delete(id):ST.set(id,prev)}
+  saveSt();afterChange();toast('已撤销：'+u.label);
+}
+
+function toggle(id,alt){
+  const prev=ST.get(id)||null;
+  rec(id,prev);
+  if(alt)ST.set(id,'wish');                    // Alt+点击 → 想看
+  else if(prev==='w')ST.delete(id);else ST.set(id,'w');
+  commit(alt?'标为想看':(prev==='w'?'取消看过':'看过'));
+  afterChange();
+}
+function setStatus(id,st){
+  rec(id,ST.get(id)||null);
+  st?ST.set(id,st):ST.delete(id);
+  commit('改为「'+(STS[st]||'未标记')+'」');
+  afterChange();
+}
+function afterChange(){
+  if(F.st!=='any')render();else{repaint();updateRundown();updateStats();refreshCounts()}
+  saveSt();
+}
+function repaint(){
+  document.querySelectorAll('.card').forEach(el=>{
+    const st=ST.get(+el.dataset.id);
+    el.className='card'+(st?' st-'+st:'');
+    el.setAttribute('aria-checked',st?'true':'false');
+    el.querySelector('.ribbon').textContent=st?STS[st]:'';
+    el.querySelector('.tick').textContent=st?'✓':'';
+  });
+}
+function refreshCounts(){
+  document.querySelectorAll('.yearsec').forEach(sec=>{
+    const it=sec._items;if(!it)return;
+    const w=it.filter(x=>ST.get(x.i)==='w').length,eps=it.filter(x=>ST.get(x.i)==='w').reduce((s,x)=>s+(x.e||0),0);
+    sec.querySelector('.meta').innerHTML=`${it.length} 部 · <b>已看 ${w}</b> · 已看 ${eps} 话`;
+    sec.querySelector('.prog i').style.width=(it.length?100*w/it.length:0)+'%';
+  });
+  document.querySelectorAll('.cour').forEach(c=>{
+    const it=c._items;if(!it)return;
+    c.querySelector('.cn').textContent=`${it.length} 部 · 已看 ${it.filter(x=>ST.get(x.i)==='w').length}`;
+  });
+  buildYearNav();
+}
+
+/* ================= 渲染 ================= */
+const stream=$('stream');
+let curYears=[];
+function sync(){buildFilters();render();persist()}
+function render(){
+  const list=D.filter(pass);
+  stream.innerHTML='';
+  const by={};list.forEach(x=>(by[x.y]=by[x.y]||[]).push(x));
+  const ys=Object.keys(by).map(Number).sort((a,b)=>b-a);
+  curYears=ys;
+  if(!ys.length){stream.innerHTML='<div class="empty"><h3>没有符合条件的番剧</h3>试着放宽筛选，或点「重置」</div>';
+    updateRundown(list);buildYearNav();updateStats();return}
+  ys.forEach((y,idx)=>{
+    const items=by[y];
+    const sec=document.createElement('section');sec.className='yearsec';sec.dataset.ys=y;
+    const w=items.filter(x=>ST.get(x.i)==='w').length;
+    sec.innerHTML=`<div class="yearhd"><h2>${y}</h2>
+      <span class="meta">${items.length} 部 · <b>已看 ${w}</b> · 已看 ${items.filter(x=>ST.get(x.i)==='w').reduce((s,x)=>s+(x.e||0),0)} 话</span>
+      <span class="prog"><i style="width:${items.length?100*w/items.length:0}%"></i></span></div>`;
+    const host=document.createElement('div');sec.appendChild(host);stream.appendChild(sec);
+    sec._items=items;
+    if(idx===0)fill(host,items);
+    else{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.disconnect();fill(host,items)}}),
+      {rootMargin:'600px'});io.observe(sec)}
+  });
+  updateRundown(list);buildYearNav();updateStats();
+}
+function fill(host,items){
+  host.innerHTML='';
+  [1,2,3,4].forEach(q=>{
+    const arr=sortIn(items.filter(x=>x.q===q));if(!arr.length)return;
+    const c=document.createElement('div');c.className='cour';c._items=arr;
+    c.innerHTML=`<div class="courhd"><h3><em>${QN[q]}</em>季 · ${q*3-2}–${q*3}月开播</h3>
+      <span class="cn">${arr.length} 部 · 已看 ${arr.filter(x=>ST.get(x.i)==='w').length}</span>
+      <span class="act"><button class="btn tiny" data-b="w">全标已看</button>
+      <button class="btn tiny" data-b="wish">想看</button>
+      <button class="btn tiny" data-b="">清除</button></span></div>`;
+    const grid=document.createElement('div');grid.className='grid';
+    arr.forEach(x=>grid.appendChild(card(x)));
+    c.appendChild(grid);host.appendChild(c);
+    c.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{
+      const st=b.dataset.b||null;begin();
+      arr.forEach(x=>{if((ST.get(x.i)||null)!==(st||null)){rec(x.i,ST.get(x.i)||null);st?ST.set(x.i,st):ST.delete(x.i)}});
+      commit((st?'已把本季':'已清除本季')+(st?'标为「'+STS[st]+'」':'标记'));
+      render();
+    });
+    lazy(grid);
+  });
+}
+function lazy(root){
+  root.querySelectorAll('img[data-src]').forEach(img=>{
+    const io=new IntersectionObserver(es=>es.forEach(e=>{
+      if(!e.isIntersecting)return;io.disconnect();const t=e.target;
+      const show=u=>{t.onload=()=>t.classList.add('shown');
+        t.onerror=()=>{if(u!==t.dataset.rem&&t.dataset.rem){t.onerror=null;t.src=t.dataset.rem}
+          else placeholder(t)}};
+      if(t.dataset.src){show(t.dataset.src);t.src=t.dataset.src}
+      else if(t.dataset.rem){show(t.dataset.rem);t.src=t.dataset.rem}
+      else placeholder(t);
+      t.removeAttribute('data-src');
+    }),{rootMargin:'500px'});
+    io.observe(img);
+  });
+}
+function placeholder(img){
+  const c=img.closest('.cover');const x=BY.get(+img.closest('.card').dataset.id);
+  img.remove();const d=document.createElement('div');d.className='ph';
+  d.textContent=(x?(x.c||x.n):'?').replace(/^[《「【]/,'').slice(0,1);c.prepend(d);
+}
+function buildYearNav(){
+  const nav=$('yearNav');nav.innerHTML='';
+  const tot={},seen={};
+  for(const x of D){
+    if(!curYears.includes(x.y))continue;
+    if(!pass2(x))continue;
+    tot[x.y]=(tot[x.y]||0)+1;
+  }
+  for(const [id,s] of ST){if(s!=='w')continue;const x=BY.get(+id);
+    if(x&&tot[x.y]!==undefined)seen[x.y]=(seen[x.y]||0)+1}
+  curYears.forEach(y=>{
+    const e=document.createElement('div');e.className='yn';
+    e.innerHTML=`${y} <b>${seen[y]||0}</b>/${tot[y]||0}`;
+    e.onclick=()=>{const t=document.querySelector(`[data-ys="${y}"]`);if(t)t.scrollIntoView({block:'start'})};
+    nav.appendChild(e);
+  });
+}
+function pass2(x){return F.q.includes(x.q)&&(!F.nonjp&&x.rg!=='jp'?false:true)&&
+  (!F.nsfw&&x.nf?false:true)}
+function updateRundown(list){
+  list=list||D.filter(pass);
+  const eps=list.filter(x=>ST.get(x.i)==='w').reduce((s,x)=>s+(x.e||0),0);
+  $('rundown').innerHTML=`<div class="k-w"><b>${count('w')}</b><span>看过</span></div>
+    <div class="k-wip"><b>${count('wip')}</b><span>在看</span></div>
+    <div class="k-wish"><b>${count('wish')}</b><span>想看</span></div>
+    <div class="k-drop"><b>${count('drop')}</b><span>弃番</span></div>
+    <div><b>${list.length.toLocaleString()}</b><span>当前筛选</span></div>
+    <div><b>${eps.toLocaleString()}</b><span>已看话数</span></div>`;
+}
+
+/* ================= 右键菜单 ================= */
+const menu=$('menu');
+function openMenu(x,cx,cy){
+  const cur=ST.get(x.i)||null;
+  menu.innerHTML=Object.entries(STS).map(([k,l])=>
+    `<button data-s="${k}"><span class="dot" style="background:var(--${k==='w'?'w':k})"></span>${l}${cur===k?' ✓':''}</button>`).join('')
+    +`<hr><button data-s=""><span class="dot" style="background:var(--tx3)"></span>清除标记</button>`;
+  menu.classList.add('on');
+  const r=menu.getBoundingClientRect();
+  menu.style.left=Math.min(cx,innerWidth-r.width-8)+'px';
+  menu.style.top=Math.min(cy,innerHeight-r.height-8)+'px';
+  menu.querySelectorAll('button').forEach(b=>b.onclick=()=>{closeMenu();setStatus(x.i,b.dataset.s||null)});
+}
+function closeMenu(){menu.classList.remove('on')}
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#menu'))closeMenu()},true);
+menu.oncontextmenu=e=>e.preventDefault();
+
+/* ================= 统计 ================= */
+function updateStats(){
+  const host=$('statsHost');
+  if(!U.stats){host.innerHTML='';return}
+  const W=[...ST].filter(([,v])=>v==='w').map(([i])=>BY.get(i)).filter(Boolean);
+  const perY={},perQ={1:0,2:0,3:0,4:0},heat={},gen={},stu={},src={};
+  let eps=0,sum=0,n=0;const hist=[0,0,0,0,0];
+  W.forEach(x=>{
+    perY[x.y]=(perY[x.y]||0)+1;perQ[x.q]=(perQ[x.q]||0)+1;
+    heat[x.y+':'+x.q]=(heat[x.y+':'+x.q]||0)+1;eps+=x.e||0;
+    if(x.s){sum+=x.s;n++;hist[Math.min(4,Math.max(0,Math.floor(x.s)-4))]++}
+    (x.g||[]).forEach(g=>gen[g]=(gen[g]||0)+1);
+    if(x.st){const k=String(x.st).split('（')[0].trim().slice(0,16);if(k)stu[k]=(stu[k]||0)+1}
+    src[x.so||'其他']=(src[x.so||'其他']||0)+1;
+  });
+  const ys=[...YEARS].sort((a,b)=>a-b),mx=Math.max(1,...ys.map(y=>perY[y]||0));
+  const hm=Math.max(1,...Object.values(heat));
+  const topN=o=>Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  const totMark=ST.size;
+  host.innerHTML=`<div class="panel"><h4>我的观看统计 <span class="hint">基于本机已标记的 ${totMark} 部（其中看过 ${W.length}）</span></h4>
+    <div class="kv"><div>看过<b>${W.length}</b></div><div>累计话数<b>${eps}</b></div>
+      <div>跨年份<b>${Object.keys(perY).length}</b></div><div>平均评分<b>${n?(sum/n).toFixed(2):'—'}</b></div>
+      <div>库内占比<b>${D.length?(100*W.length/D.length).toFixed(1):0}%</b></div></div>
+    <div class="stats">
+      <div style="grid-column:1/-1"><h4>年份 × 季度 热力图（色深＝该季看过部数）</h4>
+        <div class="heat">${[1,2,3,4].map(q=>`<div class="hrow"><span class="hl">${QN[q]}</span><div class="hcells">${
+          ys.map(y=>{const v=heat[y+':'+q]||0;return `<div class="hc" style="background:${v?`color-mix(in srgb,var(--w) ${Math.round(22+78*v/hm)}%,var(--inp))`:'var(--inp)'}"
+            title="${y} ${QN[q]}季：看过 ${v} 部"></div>`}).join('')}</div></div>`).join('')}
+        </div><div class="hint" style="margin-top:5px">${ys[0]} → ${ys[ys.length-1]}</div></div>
+      <div><h4>每年看过部数</h4><div class="bars">${ys.map(y=>`<div style="height:${(perY[y]||0)/mx*100}%"
+        title="${y}：${perY[y]||0} 部">${perY[y]?`<b>${perY[y]}</b>`:''}<i>${String(y).slice(2)}</i></div>`).join('')}</div></div>
+      <div><h4>季度分布</h4><div class="bars">${[1,2,3,4].map(q=>`<div style="height:${(perQ[q]||0)/Math.max(1,...Object.values(perQ))*100}%"
+        title="${QN[q]}季：${perQ[q]} 部"><b>${perQ[q]}</b><i>${QN[q]}</i></div>`).join('')}</div></div>
+      <div><h4>评分分布</h4><div class="bars">${hist.map((v,k)=>`<div style="height:${v/Math.max(1,...hist)*100}%"
+        title="${4+k}–${5+k} 分：${v} 部">${v?`<b>${v}</b>`:''}<i>${4+k}+</i></div>`).join('')}</div></div>
+      <div><h4>标记构成</h4>${Object.entries(STS).map(([k,l])=>
+        `<div class="srow"><span class="lb">${l}</span><span class="tr"><i style="width:${100*count(k)/Math.max(1,totMark)}%;background:var(--${k})"></i></span>
+        <span class="nu">${count(k)} 部</span></div>`).join('')}</div>
+      <div><h4>高频类型</h4><div class="list">${topN(gen).map(([k,v])=>`<span>${esc(k)} <b>${v}</b></span>`).join('')||'<span class="hint">还没标记</span>'}</div></div>
+      <div><h4>改编来源</h4><div class="list">${Object.entries(src).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span>${esc(k)} <b>${v}</b></span>`).join('')||'<span class="hint">还没标记</span>'}</div></div>
+      <div style="grid-column:1/-1"><h4>高频制作／出品</h4><div class="list">${topN(stu).map(([k,v])=>`<span>${esc(k)} <b>${v}</b></span>`).join('')||'<span class="hint">还没标记</span>'}</div></div>
+    </div></div>`;
+}
+
+/* ================= 导出 / 导入 ================= */
+$('btnExport').onclick=e=>{
+  const rows=[...ST].map(([id,s])=>({id,s,x:BY.get(id)})).filter(r=>r.x);
+  menu.innerHTML=`<button data-e="xls"><span class="dot" style="background:#217346"></span>勾选的全部 · Excel（.xlsx，含统计页）</button>`
+    +`<button data-e="xlsf"><span class="dot" style="background:#217346"></span>当前筛选结果 · Excel（含未勾选）</button>`
+    +`<hr><button data-e="all"><span class="dot" style="background:var(--tx3)"></span>全部标记 · JSON（备份/导入用）</button>`
+    +`<button data-e="w"><span class="dot" style="background:var(--w)"></span>看过 · CSV</button>`
+    +['wip','wish','drop'].map(k=>`<button data-e="${k}"><span class="dot" style="background:var(--${k})"></span>${STS[k]} · Markdown</button>`).join('');
+  menu.classList.add('on');
+  const r=menu.getBoundingClientRect(),br=e.target.getBoundingClientRect();
+  menu.style.left=Math.min(br.left,innerWidth-r.width-8)+'px';menu.style.top=(br.bottom+6)+'px';
+  menu.querySelectorAll('button').forEach(b=>b.onclick=()=>{closeMenu();doExport(b.dataset.e,rows)});
+};
+function dl(name,text,type){const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type:type||'text/plain;charset=utf-8'}));a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
+/* ---------- Excel (.xlsx) ---------- */
+const XL_HEAD=['年份','季度','开播月','开播日期','标记','中文名','日文原名','话数','评分','评分人数',
+  '改编来源','类型','标签','制作/出品','播放电视台','地区','bangumi 链接','条目ID'];
+const XL_W=[7,7,8,12,9,26,34,7,7,10,10,15,22,24,18,9,30,10];
+const xrow=x=>[x.y,QN[x.q]+'季',x.mo,x.d||'',STS[ST.get(x.i)]||'',x.c||'',x.n,x.e||null,
+  x.s==null?null:x.s,x.p||null,x.so||'',(x.g||[]).join('/'),(x.t||[]).join('/'),x.st||'',x.sta||'',
+  x.rg==='jp'?'日本':(RG[x.rg]||x.rg),'https://bgm.tv/subject/'+x.i,x.i];
+const xlsort=l=>l.slice().sort((a,b)=>b.y-a.y||a.q-b.q||(b.p||0)-(a.p||0));
+function xlStatRows(items){
+  const R=[],P=(c,s)=>R.push({c,s}),by={};
+  items.forEach(x=>{const k=ST.get(x.i)||'none';by[k]=(by[k]||0)+1});
+  P(['AnimeRex 统计 · 生成于 '+new Date().toLocaleString('zh-CN'),'','共 '+items.length+' 条'],'b');P(['','','']);
+  const rated=items.filter(x=>x.s);
+  P(['总览','数值'],'h');
+  P(['条目数',items.length]);P(['累计话数',items.reduce((s,x)=>s+(x.e||0),0)]);
+  P(['平均评分',rated.length?+(rated.reduce((s,x)=>s+x.s,0)/rated.length).toFixed(2):'']);
+  P(['最高评分',rated.length?Math.max(...rated.map(x=>x.s)):'']);
+  P(['覆盖年份',new Set(items.map(x=>x.y)).size]);
+  P(['','','']);P(['标记构成','部数'],'h');
+  Object.entries(STS).forEach(([k,l])=>P([l,by[k]||0]));P(['未标记',by.none||0]);
+  P(['','','']);P(['年份','看过','在看','想看','弃番','未标记','合计'],'h');
+  [...new Set(items.map(x=>x.y))].sort((a,b)=>b-a).forEach(y=>{
+    const g=items.filter(x=>x.y===y),c={};g.forEach(x=>{const k=ST.get(x.i)||'none';c[k]=(c[k]||0)+1});
+    P([y,c.w||0,c.wip||0,c.wish||0,c.drop||0,c.none||0,g.length])});
+  P(['','','']);P(['季度','看过','合计'],'h');
+  [1,2,3,4].forEach(q=>{const g=items.filter(x=>x.q===q);
+    P([QN[q]+'季',g.filter(x=>ST.get(x.i)==='w').length,g.length])});
+  const tally=(f,n)=>{const o={};items.forEach(x=>f(x).forEach(v=>o[v]=(o[v]||0)+1));
+    return Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,n)};
+  P(['','','']);P(['高频类型','部数'],'h');tally(x=>x.g||[],20).forEach(([k,v])=>P([k,v]));
+  P(['','','']);P(['高频标签','部数'],'h');tally(x=>x.t||[],20).forEach(([k,v])=>P([k,v]));
+  P(['','','']);P(['改编来源','部数'],'h');tally(x=>[x.so||'其他'],10).forEach(([k,v])=>P([k,v]));
+  P(['','','']);P(['制作／出品','部数'],'h');
+  tally(x=>x.st?[String(x.st).split('（')[0].trim().slice(0,24)]:[],20).forEach(([k,v])=>P([k,v]));
+  P(['','','']);P(['播放电视台','部数'],'h');
+  tally(x=>x.sta?[String(x.sta).split('/')[0].trim()]:[],15).forEach(([k,v])=>P([k,v]));
+  return R;
+}
+function exportXlsx(items,fname){
+  if(!items.length)return toast('没有可导出的条目');
+  const rows=[{c:XL_HEAD,s:'h'},...xlsort(items).map(x=>({c:xrow(x)}))];
+  const size=XLSX.download(fname,[
+    {name:'观看清单',widths:XL_W,rows,freeze:1,filter:1},
+    {name:'统计',widths:[26,10,10,10,10,10,8],rows:xlStatRows(items)}]);
+  toast(`已导出 Excel：${items.length} 行，${(size/1024).toFixed(0)} KB`);
+}
+function doExport(kind,rows){
+  if(kind==='xls')return exportXlsx(rows.map(r=>r.x),`anirex-我的清单-${date()}.xlsx`);
+  if(kind==='xlsf')return exportXlsx(D.filter(pass),`anirex-筛选结果-${date()}.xlsx`);
+  if(kind==='all'){dl(`anirex-marks-${date()}.json`,JSON.stringify({app:'AnimeRex',exported:new Date().toISOString(),
+    marks:Object.fromEntries(rows.map(r=>[r.x.i,r.s]))},null,1),'application/json');return}
+  const list=rows.filter(r=>r.s===kind).map(r=>r.x).sort((a,b)=>b.y-a.y||a.q-b.q||-(b.p||0)+(a.p||0));
+  if(!list.length)return toast('「'+STS[kind]+'」还没有条目');
+  if(kind==='w'){
+    const head='年份,季度,开播月,中文名,原名,话数,bangumi评分,评分人数,改编来源,类型,制作/出品,电视台,链接\n';
+    const csv=list.map(x=>[x.y,QN[x.q]+'季',x.mo,qq(x.c),qq(x.n),x.e||'',x.s||'',x.p||'',qq(x.so),
+      qq((x.g||[]).join('/')),qq(x.st),qq(x.sta),'https://bgm.tv/subject/'+x.i].join(',')).join('\n');
+    dl(`anirex-看过-${date()}.csv`,'\ufeff'+head+csv,'text/csv;charset=utf-8');
+  }else{
+    let md=`# AnimeRex · ${STS[kind]}清单（${list.length} 部）\n\n`,cur='';
+    list.forEach(x=>{const k=x.y+' '+QN[x.q]+'季';
+      if(k!==cur){md+=`\n## ${k}\n\n`;cur=k}
+      md+=`- [${x.c||x.n}](https://bgm.tv/subject/${x.i})${x.e?` · ${x.e}话`:''}${x.s?` · ★${x.s}`:''}${x.st?` · ${x.st}`:''}\n`});
+    dl(`anirex-${STS[kind]}-${date()}.md`,md,'text/markdown;charset=utf-8');
+  }
+  toast('已导出 '+list.length+' 部');
+}
+const date=()=>new Date().toISOString().slice(0,10);
+const qq=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"';
+$('btnImport').onclick=()=>$('fileImport').click();
+$('fileImport').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  f.text().then(t=>{
+    const o=JSON.parse(t);let added=0;
+    begin();
+    const marks=o.marks||(Array.isArray(o)?Object.fromEntries(o.map(x=>[typeof x==='object'?x.id:x,'w'])):null);
+    if(!marks)throw new Error('格式不识别');
+    for(const [id,s] of Object.entries(marks)){const x=BY.get(+id);if(!x||!STS[s])continue;
+      rec(x.i,ST.get(x.i)||null);if(!ST.has(x.i))added++;ST.set(x.i,s)}
+    commit('导入');render();
+    toast(`导入完成：新增 ${added} 条（可 Ctrl+Z 撤销）`);
+  }).catch(err=>toast('导入失败：'+err.message));
+  e.target.value='';
+};
+
+/* ================= toast / 快捷键 ================= */
+let tT;
+function toast(msg,act){
+  const el=$('toast');
+  el.innerHTML=esc(msg)+(act!==false?'<button class="btn tiny" id="tUndo">撤销 (Ctrl+Z)</button>':'');
+  el.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('on'),5200);
+  const u=$('tUndo');if(u)u.onclick=()=>{undo();el.classList.remove('on')};
+}
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'){$('help').classList.remove('on');closeMenu();
+    if(document.activeElement===$('fSearch')){$('fSearch').value='';F.search='';sync()}return}
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo();return}
+  const k=e.key.toLowerCase();
+  if(e.key==='/'){e.preventDefault();$('fSearch').focus()}
+  else if(e.key==='?'){$('help').classList.toggle('on')}
+  else if(k==='t')setTheme(U.theme==='dark'?'light':'dark')
+  else if(k==='v')setView(['grid','list','poster'][(['grid','list','poster'].indexOf(U.view)+1)%3])
+  else if(k==='s')$('btnStats').click()
+});
+
+/* ================= 启动 ================= */
+$('fTotal').textContent=D.length;
+$('fJp').textContent=D.filter(x=>x.rg==='jp').length;
+setTheme(U.theme);document.body.dataset.view=U.view;
+if(document.body.classList.contains('advopen')===false&&
+   (F.genres.length||F.sources.length||F.eps.length||F.score||F.pop||F.nonjp||F.nsfw)){
+  document.body.classList.add('advopen');$('btnAdv').classList.add('on');$('btnAdv').textContent='高级 ▴';
+}
+if(U.stats)$('btnStats').classList.add('on');
+buildFilters();render();
+setTimeout(sticky,60);
+window.ANIREX={D,BY,ST,get F(){return F},get U(){return U},pass,render,doExport,setStatus,toggle,undo,count,mkDef};
+</script>
+</body>
+</html>

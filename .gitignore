@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 抓取中间产物：cache/pages/ 是 Bangumi 分页原始 JSON，可断点续跑重建，不入库
+cache/
+
+# 日志
+*.log
+
+# 与 UI 无关的另一套抓取档案（THBWiki 秘封俱乐部，40MB 第三方翻译内容，不公开分发）
+meifang-club/
+
+# 系统
+.DS_Store
+Thumbs.db
